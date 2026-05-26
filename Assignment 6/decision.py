@@ -41,7 +41,7 @@ RULES:
 """
 
 
-def _llm_retry(prompt: str, *, retries: int = 3, **kw) -> dict:
+def _llm_retry(prompt: str, *, retries: int = 5, **kw) -> dict:
     for i in range(retries):
         try:
             return _llm.chat(prompt, **kw)
@@ -105,7 +105,8 @@ def next_step(
     resp = _llm_retry(
         prompt,
         system=_SYSTEM,
-        auto_route="decision",
+        provider="g",
+        model="gemini-3.1-flash-lite",
         tools=mcp_tools,
         tool_choice="auto",
         max_tokens=4096,
