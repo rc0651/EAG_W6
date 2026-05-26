@@ -1,0 +1,10 @@
+state/
+workspace/
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+usage.json
+.DS_Store
+*.env
+run_state/
