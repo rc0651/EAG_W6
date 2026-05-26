@@ -204,6 +204,10 @@ async def run(
                         "iter": it, "kind": "answer",
                         "goal_id": goal.id, "text": out.answer,
                     })
+                    goal.done = True  # skip extra Perception round-trip
+                    if obs.all_done:
+                        print("[agent] all goals done")
+                        break
                     continue
 
                 tc = out.tool_call
