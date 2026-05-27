@@ -8,9 +8,12 @@ Routes through auto_route="decision" so the gateway router picks the tier.
 from __future__ import annotations
 
 import json
+import re
 import sys
 import time
 from pathlib import Path
+
+_ART_RE = re.compile(r'\bart:[a-f0-9]{8,}\b')
 
 import httpx
 
@@ -65,7 +68,8 @@ def next_step(
     """Decide next action for one pending goal."""
 
     hits_lines = [
-        f"  [{h.kind}] {h.descriptor}" + (f" [artifact: {h.artifact_id}]" if h.artifact_id else "")
+        f"  [{h.kind}] {_ART_RE.sub('[stored-artifact]', h.descriptor)}"
+        + (" [has stored artifact — content provided in ATTACHED ARTIFACTS if needed]" if h.artifact_id else "")
         for h in hits
     ]
     hits_block = "\n".join(hits_lines) or "  (none)"

@@ -173,6 +173,25 @@ async def run(
 
                 if obs.all_done:
                     print("[agent] all goals done")
+                    # If nothing was done this run (all from memory), ask Decision
+                    # for a confirmatory summary so we never return "No answer produced."
+                    if not history:
+                        print("[agent] all from memory — generating summary answer")
+                        from schemas import Goal as _Goal
+                        summary_goal = _Goal(id="summary", text=query, done=False)
+                        out = decision.next_step(
+                            goal=summary_goal,
+                            hits=hits,
+                            attached=[],
+                            history=history,
+                            mcp_tools=mcp_tools,
+                        )
+                        if out.is_answer:
+                            print(f"  [decision] ANSWER: {out.answer[:300]}")
+                            history.append({
+                                "iter": it, "kind": "answer",
+                                "goal_id": "summary", "text": out.answer,
+                            })
                     break
 
                 goal = obs.next_unfinished()
